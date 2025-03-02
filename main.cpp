@@ -30,7 +30,7 @@ struct Apple {
     Color color;
 };
 
-static void UpdateGame(void);
+
 int main(void)
 {    
     // Initialization
@@ -56,7 +56,6 @@ int main(void)
 
         ClearBackground(RAYWHITE);
 
-        UpdateGame();
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -66,20 +65,4 @@ int main(void)
     CloseWindow();       
 
     return 0;
-}
-
-
-void MainGame(void) {
-
-    frameCounter = 0;
-
-}
-void UpdateGame() {
-    if (IsKeyDown(KEY_D)) {
-        std::cout << "Bro ";
-    }
-}
-
-void UpdateDrawFrame(void) {
-
 }
