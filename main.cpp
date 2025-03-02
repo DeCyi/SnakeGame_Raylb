@@ -7,15 +7,6 @@
 // Program main entry point
 //------------------------------------------------------------------------------------
 
-
-static int screenwidth = 800;
-static int screenheight = 500;
-
-static int frameCounter = 0;
-static bool isOver = false;
-
-
-
 struct Snake {
     Vector2 position;
     Vector2 speed;
@@ -30,6 +21,15 @@ struct Apple {
     Color color;
 };
 
+
+// Global variables subject to modifications
+static int screenwidth = 800;
+static int screenheight = 500;
+
+static int frameCounter = 0;
+static bool isOver = false;
+
+
 static void UpdateGame(void);
 int main(void)
 {    
@@ -39,7 +39,7 @@ int main(void)
 
     InitWindow(screenwidth, screenheight, "Snake");
 
-    SetTargetFPS(30);               // Set our game to run at 60 frames-per-second
+    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
     // Main game loop
@@ -70,16 +70,16 @@ int main(void)
 
 
 void MainGame(void) {
-
+    // For our main game function to be updated
     frameCounter = 0;
 
 }
 void UpdateGame() {
-    if (IsKeyDown(KEY_D)) {
-        std::cout << "Bro ";
-    }
+    // Set up hotkeys
+
+    
 }
 
 void UpdateDrawFrame(void) {
-
+    // Frame update
 }
