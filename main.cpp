@@ -2,7 +2,8 @@
 #include "raylib.h"
 #include <string>
 #include <iostream>
-
+#define SNAKE_LEN 256
+#define cellSize 30
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
@@ -28,6 +29,25 @@ static int screenheight = 500;
 
 static int frameCounter = 0;
 static bool isOver = false;
+
+static Snake snake[SNAKE_LEN];
+
+void InitGame() {
+
+    //offset.x = screenwidth % cellSize;
+    //offset.y = screenheight % cellSize;
+
+
+    for (int i = 0; i < SNAKE_LEN; i++) {
+        snake[i].position.x = { 0 };
+        snake[i].position.y = { 0 };
+        snake[i].size = { (float)cellSize, (float)cellSize };
+        snake[i].speed = Vector2{ (float)1, 0 };
+    }
+
+
+
+}
 
 
 static void UpdateGame(void);
