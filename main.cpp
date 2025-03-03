@@ -4,9 +4,28 @@
 #include <iostream>
 #define SNAKE_LEN 256
 #define cellSize 30
+
+using namespace std;
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
+
+// Global variables subject to modifications
+
+
+static int screenwidth = 800;
+static int screenheight = 500;
+
+
+static int cellX = screenwidth / cellSize;
+static int cellY = screenheight / cellSize;
+
+
+
+static int frameCounter = 0;
+static bool isOver = false;
+
+
 
 struct Snake {
     Vector2 position;
@@ -23,12 +42,40 @@ struct Apple {
 };
 
 
-// Global variables subject to modifications
-static int screenwidth = 800;
-static int screenheight = 500;
+// random apple
+//Create Food Struct:
+//Create Food Class
+//Initialize Random Seed:
+//Create and Draw Food in Main Loop :
+class Foods {
 
-static int frameCounter = 0;
-static bool isOver = false;
+private:
+
+    Vector2 xy;
+
+public:
+
+    int x, y;
+
+    // random x and y
+    void Food() {
+
+        x = GetRandomValue(0, 30);
+        y = GetRandomValue(0, 30);
+    }
+
+
+    Vector2 vector = { (float)x, (float)y };
+
+    // image of the food (apple)
+
+
+    void Draw() {
+
+        DrawRectangle(vector.x * cellX, vector.y * cellY, cellSize, cellSize, BLACK);
+
+    }
+};
 
 static Snake snake[SNAKE_LEN];
 
@@ -57,6 +104,7 @@ int main(void)
     //--------------------------------------------------------------------------------------
 
 
+
     InitWindow(screenwidth, screenheight, "Snake");
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
@@ -72,9 +120,15 @@ int main(void)
 
         // Draw
         //----------------------------------------------------------------------------------
+
+
+
+     
         BeginDrawing();
-        /// tryyyyyyyyyashahsauhshauhsa
-        ClearBackground(RAYWHITE);
+        
+
+
+        ClearBackground(LIME);
 
         UpdateGame();
 
