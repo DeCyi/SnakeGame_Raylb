@@ -36,6 +36,7 @@ Vector2 offset = { 0 };
 
 
 Snake snake[100] = { 0 };
+Apple apple = { 0 };
 int snakeLegnth = 3;
 
 
@@ -51,7 +52,7 @@ int main(void)
 
     InitWindow(screenwidth, screenheight, "Snake");
 
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    SetTargetFPS(30);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
 
     float centerX = ((screenwidth / 2) / squareSize) * squareSize;
@@ -59,15 +60,22 @@ int main(void)
     for (int i = 0; i < snakeLegnth; i++) {
         snake[i].position = { centerX - (i * (float)squareSize), centerY }; 
         snake[i].size = { (float)squareSize, (float)squareSize }; 
-        snake[i].speed = { (float)squareSize, 1 };
+        snake[i].speed = { (float)squareSize, 0 };
         snake[i].color = GREEN; 
     }
     snake[0].color = RED;
+
+    //Render apple position
+    apple.position = { (float)5 * squareSize, (float)6 * squareSize }; //Random x and y for now
+    apple.size = { (float)squareSize, (float)squareSize };
+    apple.color = YELLOW;
+
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
         //----------------------------------------------------------------------------------
         DrawBackground();
+        DrawRectangle(apple.position.x, apple.position.y, apple.size.x, apple.size.y, apple.color);
         UpdateGame();
         //----------------------------------------------------------------------------------
     }
@@ -85,8 +93,14 @@ void MainGame(void) {
 
 }
 void UpdateGame() {
-    // Set up hotkeys
+  
+    for (int i = 0; i < snakeMax; i++) {
+        snake[i].position.x += 0.5f + snake[i].speed.x;
+    }
+
+
 }
+
 void DrawBackground(void) {
     BeginDrawing(); 
 
@@ -102,8 +116,6 @@ void DrawBackground(void) {
     }
 
     for (int i = 0; i < snakeLegnth; i++) {
-
-       
         DrawRectangle(snake[i].position.x, snake[i].position.y,
             snake[i].size.x, snake[i].size.y, snake[i].color);
     }
