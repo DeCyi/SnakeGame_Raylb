@@ -8,7 +8,7 @@
 // Program main entry point
 //------------------------------------------------------------------------------------
 
-int snakeMax = 100;
+const int snakeMax = 100;
 int squareSize = 32;
 
 struct Snake {
@@ -27,20 +27,16 @@ struct Apple {
 
 
 // Global variables subject to modifications
-static int screenwidth = 1920;
-static int screenheight = 1080;
+static int screenwidth = 800;
+static int screenheight = 450;
 
-static int frameCounter = 0;
-static bool isOver = false;
-int cTail = 0;
 Vector2 offset = { 0 };
 
+Snake snake[snakeMax] = { 0 };
+Apple apple = { 0 };
 
-Snake snake[100] = { 0 };
-int snakeLegnth = 3;
-
-
-
+int snakeLength = 2;
+Vector2 snakePosition[snakeMax] = { 0 };
 
 static void UpdateGame(void);
 static void DrawBackground(void);
@@ -52,12 +48,12 @@ int main(void)
 
     InitWindow(screenwidth, screenheight, "Snake");
 
-    SetTargetFPS(1);               
+    SetTargetFPS(10);               
     //--------------------------------------------------------------------------------------
 
     float centerX = ((screenwidth / 2) / squareSize) * squareSize;
     float centerY = ((screenheight / 2) / squareSize) * squareSize;
-    for (int i = 0; i < snakeLegnth; i++) {
+    for (int i = 0; i < snakeLength; i++) {
         snake[i].position = { centerX - (i * (float)squareSize), centerY }; 
         snake[i].size = { (float)squareSize, (float)squareSize }; 
         snake[i].speed = { (float)squareSize, 1 };
@@ -90,14 +86,58 @@ int main(void)
 
 void MainGame(void) {
     // For our main game function to be updated
-    frameCounter = 0;
 
 }
 void UpdateGame() {
-  
-    for (int i = 0; i < snakeMax; i++) {
-        snake[i].position.x += 0.5f + snake[i].speed.x;
+
+    if (IsKeyPressed(KEY_LEFT))
+    {
+		snake[0].speed.x = (float) - squareSize;
+		snake[0].speed.y = 0;
     }
+    if (IsKeyPressed(KEY_UP))
+    {
+        snake[0].speed.x = 0;
+        snake[0].speed.y = (float)-squareSize;
+    }
+    if (IsKeyPressed(KEY_DOWN))
+    {
+        snake[0].speed.x = 0;
+        snake[0].speed.y = (float)squareSize;
+    }
+    if (IsKeyPressed(KEY_RIGHT))
+    {
+        snake[0].speed.x = (float)squareSize;
+        snake[0].speed.y = 0;
+    }
+
+    if (IsKeyDown(KEY_SPACE)) {
+        snakeLength++;
+
+		snake[snakeLength - 1].position = snake[snakeLength - 2].position;
+		snake[snakeLength - 1].size = snake[snakeLength - 2].size;
+		snake[snakeLength - 1].speed = snake[snakeLength - 2].speed;
+		snake[snakeLength - 1].color = snake[snakeLength - 2].color;
+    }
+
+
+    for (int i = 0; i < snakeLength; i++) {
+		snakePosition[i] = snake[i].position;
+        if (i == 0) {
+            snake[0].position.x += snake[0].speed.x;
+            snake[0].position.y += snake[0].speed.y;
+        }
+        else {
+			snake[i].position = snakePosition[i - 1];
+        }
+    }
+
+
+
+	
+
+
+
 
 }
 void DrawBackground(void) {
@@ -114,7 +154,7 @@ void DrawBackground(void) {
         DrawLineV(start, end, LIGHTGRAY);
     }
 
-    for (int i = 0; i < snakeLegnth; i++) {
+    for (int i = 0; i < snakeLength; i++) {
 
        
         DrawRectangle(snake[i].position.x, snake[i].position.y,
