@@ -2,7 +2,8 @@
 #include "raylib.h"
 #include <string>
 #include <iostream>
-
+#include <math.h>
+#define SNAKE_LEN 256
 //------------------------------------------------------------------------------------
 // Program main entry point
 //------------------------------------------------------------------------------------
@@ -26,8 +27,8 @@ struct Apple {
 
 
 // Global variables subject to modifications
-static int screenwidth = 800;
-static int screenheight = 450;
+static int screenwidth = 1920;
+static int screenheight = 1080;
 
 static int frameCounter = 0;
 static bool isOver = false;
@@ -51,7 +52,7 @@ int main(void)
 
     InitWindow(screenwidth, screenheight, "Snake");
 
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    SetTargetFPS(1);               
     //--------------------------------------------------------------------------------------
 
     float centerX = ((screenwidth / 2) / squareSize) * squareSize;
@@ -63,6 +64,14 @@ int main(void)
         snake[i].color = GREEN; 
     }
     snake[0].color = RED;
+
+    //Render apple position
+    
+
+    apple.position = { (float)5 * squareSize, (float)6 * squareSize }; //Random x and y for now
+    apple.size = { (float)squareSize, (float)squareSize };
+    apple.color = YELLOW;
+
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
@@ -85,7 +94,11 @@ void MainGame(void) {
 
 }
 void UpdateGame() {
-    // Set up hotkeys
+  
+    for (int i = 0; i < snakeMax; i++) {
+        snake[i].position.x += 0.5f + snake[i].speed.x;
+    }
+
 }
 void DrawBackground(void) {
     BeginDrawing(); 

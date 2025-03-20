@@ -109,7 +109,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>F:\U ser\Documents\C++\SnakeGame\SnakeGame_Raylb\Library\raylib-5.5_win32_msvc16\lib;%(AdditionalLibraryDirectories);F:\U ser\Documents\C++\SnakeGame\SnakeGame_Raylb\Library\raylib-5.5_win32_msvc16\lib;F:\U ser\Documents\C++\SnakeGame\SnakeGame_Raylb\Library\raylib-5.5_win32_msvc16\lib;F:\U ser\Documents\C++\SnakeGame\SnakeGame_Raylb\Library\raylib-5.5_win32_msvc16\lib</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>"C:\Users\Liam\source\repos\SnakeGame_Raylb\Library\raylib-5.5_win32_msvc16\lib"</AdditionalLibraryDirectories>
       <AdditionalDependencies>raylib.lib;winmm.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
