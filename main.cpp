@@ -2,13 +2,11 @@
 #include "raylib.h"
 #include <string>
 #include <iostream>
-#define SNAKE_LEN 256
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
-
-int snakeMax = 100;
-int squareSize = 32;
+#define MAX_SNAKE_LENGTH 100
+#define SCREEN_WIDTH 800
+#define SCREEN_HEIGHT 450
+#define SQUARE_SIZE 32
+#define DEFAULT_SNAKE_INIT_LENGTH 2
 
 struct Snake {
     Vector2 position;
@@ -24,101 +22,128 @@ struct Apple {
     Color color;
 };
 
-
-// Global variables subject to modifications
-static int screenwidth = 800;
-static int screenheight = 450;
-
-static int frameCounter = 0;
-static bool isOver = false;
-int cTail = 0;
+int frameCounter = 0;
 Vector2 offset = { 0 };
-
-
-Snake snake[100] = { 0 };
+Vector2 previousPosition = { 0 };
+Snake snake[MAX_SNAKE_LENGTH] = { 0 };
 Apple apple = { 0 };
-int snakeLegnth = 3;
+int snakeLength = DEFAULT_SNAKE_INIT_LENGTH;
 
-
-
-
+static void InitGame(void);
+static void GrowSnake(void);
 static void UpdateGame(void);
-static void DrawBackground(void);
+static void DrawElements(void);
+
 int main(void)
 {    
-    // Initialization
-    //--------------------------------------------------------------------------------------
-
-
-    InitWindow(screenwidth, screenheight, "Snake");
-
-    SetTargetFPS(30);               // Set our game to run at 60 frames-per-second
-    //--------------------------------------------------------------------------------------
-
-    float centerX = ((screenwidth / 2) / squareSize) * squareSize;
-    float centerY = ((screenheight / 2) / squareSize) * squareSize;
-    for (int i = 0; i < snakeLegnth; i++) {
-        snake[i].position = { centerX - (i * (float)squareSize), centerY }; 
-        snake[i].size = { (float)squareSize, (float)squareSize }; 
-        snake[i].speed = { (float)squareSize, 0 };
-        snake[i].color = GREEN; 
-    }
-    snake[0].color = RED;
-
-    //Render apple position
-    apple.position = { (float)5 * squareSize, (float)6 * squareSize }; //Random x and y for now
-    apple.size = { (float)squareSize, (float)squareSize };
-    apple.color = YELLOW;
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake");
+    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    InitGame(); // Initialize game variables
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
-        //----------------------------------------------------------------------------------
-        DrawBackground();
-        DrawRectangle(apple.position.x, apple.position.y, apple.size.x, apple.size.y, apple.color);
         UpdateGame();
-        //----------------------------------------------------------------------------------
+        DrawElements();
     }
-
-    
     CloseWindow();       
 
     return 0;
 }
 
+void InitGame() {
+    float centerX = ((SCREEN_WIDTH / 2) / SQUARE_SIZE) * SQUARE_SIZE;
+    float centerY = ((SCREEN_HEIGHT / 2) / SQUARE_SIZE) * SQUARE_SIZE;
 
-void MainGame(void) {
-    // For our main game function to be updated
-    frameCounter = 0;
+    for (int i = 0; i < MAX_SNAKE_LENGTH; i++) {
+        snake[i].position = { centerX - (i * (float)SQUARE_SIZE), centerY };
+        snake[i].size = { (float)SQUARE_SIZE, (float)SQUARE_SIZE };
+        snake[i].speed = { (float)SQUARE_SIZE, 0 };
+        snake[i].color = GREEN;
+    }
+    snake[0].color = RED;
 
+    //Render apple position
+    apple.position = { (float)5 * SQUARE_SIZE, (float)6 * SQUARE_SIZE }; //Random x and y for now
+    apple.size = { (float)SQUARE_SIZE, (float)SQUARE_SIZE };
+    apple.color = YELLOW;
 }
+
+void GrowSnake() {
+	snake[snakeLength].position = snake[snakeLength - 1].position;
+	snake[snakeLength].size = snake[snakeLength - 1].size;
+	snake[snakeLength].speed = snake[snakeLength - 1].speed;
+	snake[snakeLength].color = snake[snakeLength - 1].color;
+	snakeLength++;
+}
+
 void UpdateGame() {
-  
-    for (int i = 0; i < snakeMax; i++) {
-        snake[i].position.x += 0.5f + snake[i].speed.x;
+    if (IsKeyPressed(KEY_LEFT))
+    {
+        snake[0].speed.x = (float)-SQUARE_SIZE; //If left key, move left (negative x)
+        snake[0].speed.y = 0; //No y movement
+    }
+    if (IsKeyPressed(KEY_UP))
+    {
+        snake[0].speed.x = 0; //No x movement
+        snake[0].speed.y = (float)-SQUARE_SIZE; //If up key, move up (negative y)
+    }
+    if (IsKeyPressed(KEY_DOWN))
+    {
+        snake[0].speed.x = 0; //No x movement
+        snake[0].speed.y = (float)SQUARE_SIZE; //If down key, move down (positive y)
+    }
+    if (IsKeyPressed(KEY_RIGHT))
+    {
+        snake[0].speed.x = (float)SQUARE_SIZE; //If right key, move right (positive x)
+        snake[0].speed.y = 0; //No y movement
     }
 
+    if (IsKeyDown(KEY_SPACE)) {
+        GrowSnake();
+    }
 
+    // Makes sure that it remembers where the head is now
+    Vector2 previousPosition = snake[0].position;
+
+	if ((frameCounter % 5) == 0) { // Moves the snake every 5 frames
+        // Moves the head in its current direction
+        snake[0].position.x += snake[0].speed.x;
+        snake[0].position.y += snake[0].speed.y;
+
+        // Makes the body follow the head
+        for (int i = 1; i < snakeLength; i++) {
+            Vector2 temp = snake[i].position; // Saves the current body part's position
+            snake[i].position = previousPosition; // Moves it to where the part in front was
+            previousPosition = temp; // Update the previous position for the next part
+        }
+        if (snake[0].position.x == apple.position.x && snake[0].position.y == apple.position.y) {
+            GrowSnake(); 
+        }
+    }
+	frameCounter++;
 }
 
-void DrawBackground(void) {
+void DrawElements(void) {
     BeginDrawing(); 
 
-    for (int i = 0; i < screenwidth / squareSize + 1; i++) {
-        Vector2 start = { squareSize * i + offset.x / 2.0f, offset.y / 2.0f };
-        Vector2 end = { squareSize * i + offset.x / 2.0f, screenheight - offset.y / 2.0f };
+    for (int i = 0; i < SCREEN_WIDTH / SQUARE_SIZE + 1; i++) {
+        Vector2 start = { SQUARE_SIZE * i + offset.x / 2.0f, offset.y / 2.0f };
+        Vector2 end = { SQUARE_SIZE * i + offset.x / 2.0f, SCREEN_HEIGHT - offset.y / 2.0f };
         DrawLineV(start, end, LIGHTGRAY);
     }
-    for (int i = 0; i < screenheight / squareSize + 1; i++) {
-        Vector2 start = {offset.x / 2.0f, squareSize * i + offset.y};
-        Vector2 end = { screenwidth - offset.x / 2.0f, squareSize * i + offset.y / 2.0};
+    for (int i = 0; i < SCREEN_HEIGHT / SQUARE_SIZE + 1; i++) {
+        Vector2 start = {offset.x / 2.0f, SQUARE_SIZE * i + offset.y};
+        Vector2 end = { SCREEN_WIDTH - offset.x / 2.0f, SQUARE_SIZE * i + offset.y / 2.0};
         DrawLineV(start, end, LIGHTGRAY);
     }
-
-    for (int i = 0; i < snakeLegnth; i++) {
+    for (int i = 0; i < snakeLength; i++) {
         DrawRectangle(snake[i].position.x, snake[i].position.y,
             snake[i].size.x, snake[i].size.y, snake[i].color);
     }
+    DrawRectangle(apple.position.x, apple.position.y, apple.size.x, apple.size.y, apple.color);
+
+    
     ClearBackground(SKYBLUE);
     EndDrawing();
 }
