@@ -6,6 +6,7 @@
 #define SCREEN_WIDTH 800
 #define SCREEN_HEIGHT 450
 #define SQUARE_SIZE 32
+#define DEFAULT_SNAKE_INIT_LENGTH 2
 
 struct Snake {
     Vector2 position;
@@ -26,31 +27,39 @@ Vector2 offset = { 0 };
 Vector2 previousPosition = { 0 };
 Snake snake[MAX_SNAKE_LENGTH] = { 0 };
 Apple apple = { 0 };
-int snakeLength = 2;
+int snakeLength = DEFAULT_SNAKE_INIT_LENGTH;
 
-void GrowSnake(void);
+static void InitGame(void);
+static void GrowSnake(void);
 static void UpdateGame(void);
-static void DrawBackground(void);
+static void DrawElements(void);
 
 int main(void)
 {    
-    // Initialization
-    //--------------------------------------------------------------------------------------
-
-
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake");
-
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
-    //--------------------------------------------------------------------------------------
+    InitGame(); // Initialize game variables
 
+    // Main game loop
+    while (!WindowShouldClose())    // Detect window close button or ESC key
+    {
+        UpdateGame();
+        DrawElements();
+    }
+    CloseWindow();       
+
+    return 0;
+}
+
+void InitGame() {
     float centerX = ((SCREEN_WIDTH / 2) / SQUARE_SIZE) * SQUARE_SIZE;
     float centerY = ((SCREEN_HEIGHT / 2) / SQUARE_SIZE) * SQUARE_SIZE;
 
     for (int i = 0; i < MAX_SNAKE_LENGTH; i++) {
-        snake[i].position = { centerX - (i * (float)SQUARE_SIZE), centerY }; 
-        snake[i].size = { (float)SQUARE_SIZE, (float)SQUARE_SIZE }; 
+        snake[i].position = { centerX - (i * (float)SQUARE_SIZE), centerY };
+        snake[i].size = { (float)SQUARE_SIZE, (float)SQUARE_SIZE };
         snake[i].speed = { (float)SQUARE_SIZE, 0 };
-        snake[i].color = GREEN; 
+        snake[i].color = GREEN;
     }
     snake[0].color = RED;
 
@@ -58,22 +67,6 @@ int main(void)
     apple.position = { (float)5 * SQUARE_SIZE, (float)6 * SQUARE_SIZE }; //Random x and y for now
     apple.size = { (float)SQUARE_SIZE, (float)SQUARE_SIZE };
     apple.color = YELLOW;
-
-    // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
-    {
-        UpdateGame();
-
-
-        DrawBackground();
-        DrawRectangle(apple.position.x, apple.position.y, apple.size.x, apple.size.y, apple.color);
-        //----------------------------------------------------------------------------------
-    }
-
-    
-    CloseWindow();       
-
-    return 0;
 }
 
 void GrowSnake() {
@@ -113,7 +106,7 @@ void UpdateGame() {
     // Makes sure that it remembers where the head is now
     Vector2 previousPosition = snake[0].position;
 
-    if ((frameCounter % 5) == 0) {
+	if ((frameCounter % 5) == 0) { // Moves the snake every 5 frames
         // Moves the head in its current direction
         snake[0].position.x += snake[0].speed.x;
         snake[0].position.y += snake[0].speed.y;
@@ -125,13 +118,13 @@ void UpdateGame() {
             previousPosition = temp; // Update the previous position for the next part
         }
         if (snake[0].position.x == apple.position.x && snake[0].position.y == apple.position.y) {
-            GrowSnake();
+            GrowSnake(); 
         }
     }
 	frameCounter++;
 }
 
-void DrawBackground(void) {
+void DrawElements(void) {
     BeginDrawing(); 
 
     for (int i = 0; i < SCREEN_WIDTH / SQUARE_SIZE + 1; i++) {
@@ -144,11 +137,13 @@ void DrawBackground(void) {
         Vector2 end = { SCREEN_WIDTH - offset.x / 2.0f, SQUARE_SIZE * i + offset.y / 2.0};
         DrawLineV(start, end, LIGHTGRAY);
     }
-
     for (int i = 0; i < snakeLength; i++) {
         DrawRectangle(snake[i].position.x, snake[i].position.y,
             snake[i].size.x, snake[i].size.y, snake[i].color);
     }
+    DrawRectangle(apple.position.x, apple.position.y, apple.size.x, apple.size.y, apple.color);
+
+    
     ClearBackground(SKYBLUE);
     EndDrawing();
 }
