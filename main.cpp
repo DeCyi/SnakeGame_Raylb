@@ -2,6 +2,8 @@
 #include "raylib.h"
 #include <string>
 #include <iostream>
+#include <math.h>
+#include <ctime>
 #define SNAKE_LEN 256
 #define cellSize 30
 
@@ -65,15 +67,39 @@ public:
     }
 
 
-    Vector2 vector = { (float)x, (float)y };
+    srand((unsigned int)time (NULL));
+
+    int centerX = ((screenwidth / 2) / squareSize) * squareSize;
+    int centerY = ((screenheight / 2) / squareSize) * squareSize;
+
+    for (int i = 0; i < snakeLength; i++) {
+        snake[i].position = { (float)centerX - (i * (float)squareSize), (float)centerY }; 
+        snake[i].size = { (float)squareSize, (float)squareSize }; 
+        snake[i].speed = { (float)squareSize, 1 };
+        snake[i].color = GREEN; 
+    }
+    snake[0].color = RED;
 
     // image of the food (apple)
 
 
-    void Draw() {
+    apple.position = {
+        (float)((rand() % (screenwidth / squareSize)) * squareSize) ,
+        (float)((rand() % (screenheight / squareSize)) * squareSize) 
+    }; //Random x and y for now
+    apple.size = { (float)squareSize, (float)squareSize };// Size of the apple
+    apple.color = YELLOW; 
 
-        DrawRectangle(vector.x * cellX, vector.y * cellY, cellSize, cellSize, BLACK);
 
+
+
+    // Main game loop
+    while (!WindowShouldClose())    // Detect window close button or ESC key
+    {
+        //----------------------------------------------------------------------------------
+        DrawBackground();
+        UpdateGame();
+        //----------------------------------------------------------------------------------
     }
 };
 
@@ -139,8 +165,18 @@ int main(void)
     
     CloseWindow();       
 
-    return 0;
-}
+    ClearBackground(SKYBLUE);
+
+    for (int i = 0; i < screenwidth / squareSize + 1; i++) {
+        Vector2 start = { squareSize * i + offset.x / 2.0f, offset.y / 2.0f };
+        Vector2 end = { squareSize * i + offset.x / 2.0f, screenheight - offset.y / 2.0f };
+        DrawLineV(start, end, LIGHTGRAY);
+    }
+    for (int i = 0; i < screenheight / squareSize + 1; i++) {
+        Vector2 start = {offset.x / 2.0f, squareSize * i + offset.y};
+        Vector2 end = { screenwidth - offset.x / 2.0f, squareSize * i + offset.y / 2.0f};
+        DrawLineV(start, end, LIGHTGRAY);
+    }
 
 
 void MainGame(void) {
@@ -151,9 +187,14 @@ void MainGame(void) {
 void UpdateGame() {
     // Set up hotkeys
 
-    
-}
+       
+        DrawRectangle(
+            (int)snake[i].position.x, (int)snake[i].position.y,
+            (int)snake[i].size.x,(int) snake[i].size.y, snake[i].color);
+    }
 
-void UpdateDrawFrame(void) {
-    // Frame update
+    DrawRectangleV (apple.position, apple.size, apple.color);
+
+    
+    EndDrawing();
 }
