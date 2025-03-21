@@ -3,7 +3,7 @@
 #include <string>
 #include <iostream>
 #include <math.h>
-#include <ctime>
+#include <cstdlib>
 #define SNAKE_LEN 256
 #define cellSize 30
 
@@ -67,7 +67,7 @@ public:
     }
 
 
-    srand((unsigned int)time (NULL));
+ 
 
     int centerX = ((screenwidth / 2) / squareSize) * squareSize;
     int centerY = ((screenheight / 2) / squareSize) * squareSize;
@@ -83,13 +83,17 @@ public:
     // image of the food (apple)
 
 
-    apple.position = {
-        (float)((rand() % (screenwidth / squareSize)) * squareSize) ,
-        (float)((rand() % (screenheight / squareSize)) * squareSize) 
-    }; //Random x and y for now
-    apple.size = { (float)squareSize, (float)squareSize };// Size of the apple
-    apple.color = YELLOW; 
+    void RandomApple(int screenwidth, int squareSize, int screenheight) {
 
+        int apple;
+
+        apple.position = {
+            (float)((rand() % (screenwidth / squareSize)) * squareSize) ,
+            (float)((rand() % (screenheight / squareSize)) * squareSize)
+        }; //Random x and y for now
+        apple.size = { (float)squareSize, (float)squareSize };// Size of the apple
+        apple.color = YELLOW;
+    }
 
 
 
@@ -119,7 +123,7 @@ void InitGame() {
     }
 
 
-
+    apple = RandomApple(screenwidth, screenheight, cellSize);
 }
 
 
@@ -135,6 +139,11 @@ int main(void)
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     //--------------------------------------------------------------------------------------
+
+    rand((unsigned int)time(NULL));
+
+
+    void apple = RandomApple(screenwidth, squareSize, screenheight);
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -155,6 +164,8 @@ int main(void)
 
 
         ClearBackground(LIME);
+
+        DrawRectangleV(apple.position, apple.size, apple.color);
 
         UpdateGame();
 
@@ -193,7 +204,6 @@ void UpdateGame() {
             (int)snake[i].size.x,(int) snake[i].size.y, snake[i].color);
     }
 
-    DrawRectangleV (apple.position, apple.size, apple.color);
 
     
     EndDrawing();
