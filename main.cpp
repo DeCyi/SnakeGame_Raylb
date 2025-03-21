@@ -40,6 +40,8 @@ Vector2 snakePosition[snakeMax] = { 0 }; //Array of each body part position
 
 static void UpdateGame(void);
 static void DrawBackground(void);
+static void CollisionWall(void);
+static void CollisionSelf(void);
 int main(void)
 {    
     // Initialization
@@ -133,13 +135,8 @@ void UpdateGame() {
         }
     }
 
-
-
-	
-
-
-
-
+    CollisionWall();
+    CollisionSelf();
 }
 void DrawBackground(void) {
     BeginDrawing(); 
@@ -164,3 +161,18 @@ void DrawBackground(void) {
     ClearBackground(SKYBLUE);
     EndDrawing();
 }
+void CollisionWall(void) {
+    if (snake[0].position.x >= screenwidth || snake[0].position.x < 0) {
+        std::cout << "Game Over!" << std::endl;
+    }
+    if (snake[0].position.y >= screenheight || snake[0].position.y < 0) {
+        std::cout << "Game Over!" << std::endl;
+    }
+}
+void CollisionSelf(void) {
+        for (int i = 1; i < snakeLength; i++) {
+            if ((snake[0].position.x == snake[i].position.x) && (snake[0].position.y == snake[i].position.y)) {
+                std::cout << "Game Over!" << std::endl;
+            }
+        }
+    }
