@@ -3,16 +3,16 @@
 #include <string>
 #include <iostream>
 #define MAX_SNAKE_LENGTH 100
-#define SCREEN_WIDTH 800
-#define SCREEN_HEIGHT 450
+#define SCREEN_WIDTH 600
+#define SCREEN_HEIGHT 600
 #define SQUARE_SIZE 32
-#define DEFAULT_SNAKE_INIT_LENGTH 2
+#define DEFAULT_SNAKE_INIT_LENGTH 3
 
 
 enum Speed {
 	SLOW = 8,
-	MEDIUM = 5,
-	FAST = 2,
+	MEDIUM = 6,
+	FAST = 3,
 };
 
 struct Snake {
@@ -28,13 +28,13 @@ struct Apple {
     Color color;
 };
 
-Speed speed = SLOW;
+Speed speed = FAST;
 int frameCounter = 0;
 Vector2 offset = { 0 };
 Vector2 previousPosition = { 0 };
 Snake snake[MAX_SNAKE_LENGTH] = { 0 };
 Apple apple = { 0 };
-int snakeLength = DEFAULT_SNAKE_INIT_LENGTH;
+int snakeLength;
 
 static void InitGame(void);
 static void UpdateGame(void);
@@ -69,6 +69,9 @@ int main(void)
 }
 
 void InitGame() {
+    snakeLength = DEFAULT_SNAKE_INIT_LENGTH;
+
+
     float centerX = ((SCREEN_WIDTH / 2) / SQUARE_SIZE) * SQUARE_SIZE;
     float centerY = ((SCREEN_HEIGHT / 2) / SQUARE_SIZE) * SQUARE_SIZE;
 
@@ -157,11 +160,11 @@ void CollisionWall(void) {
 	// If the head of the snake is outside the screen
     if (snake[0].position.x >= SCREEN_WIDTH || snake[0].position.x < 0) {
         std::cout << "Game Over!" << std::endl;
-		exit(0);
+        InitGame();
     }
     if (snake[0].position.y >= SCREEN_HEIGHT || snake[0].position.y < 0) {
         std::cout << "Game Over!" << std::endl;
-        exit(0);
+        InitGame();
     }
 }
 void CollisionSelf(void) {
@@ -169,7 +172,7 @@ void CollisionSelf(void) {
         for (int i = 1; i < snakeLength; i++) {
             if ((snake[0].position.x == snake[i].position.x) && (snake[0].position.y == snake[i].position.y)) {
                 std::cout << "Game Over!" << std::endl;
-                exit(0);
+                InitGame();
             }
         }
     }
@@ -182,14 +185,18 @@ void CollisionApple(void) {
 		std::cout << "Apple eaten!" << std::endl;
 		RandomApple();
     }
-    
 }
 
 void RandomApple() {
 	srand(time(NULL)); // Seed random number generator
-	apple.position = { // Randomize apple position
-        (float)((rand() % (SCREEN_WIDTH / SQUARE_SIZE)) * SQUARE_SIZE) ,
-        (float)((rand() % (SCREEN_HEIGHT / SQUARE_SIZE)) * SQUARE_SIZE)
-    };
+	Vector2 previousApplePosition = apple.position;
+    Vector2 newApplePosition;
+    do {
+        newApplePosition = { // Randomize apple position
+            (float)((rand() % (SCREEN_WIDTH / SQUARE_SIZE)) * SQUARE_SIZE) ,
+            (float)((rand() % (SCREEN_HEIGHT / SQUARE_SIZE)) * SQUARE_SIZE)
+        };
+        apple.position = { newApplePosition.x, newApplePosition.y };
+	} while (previousApplePosition.x == newApplePosition.x && previousApplePosition.y == newApplePosition.y);
     std::cout << "Apple position: " << apple.position.x << " " << apple.position.y << std::endl;
 }
