@@ -35,6 +35,7 @@ static void CollisionWall(void);
 static void CollisionSelf(void);
 static void CollisionApple(void);
 static void DrawElements(void);
+static void RandomApple(void);
 
 int main(void)
 {    
@@ -66,7 +67,7 @@ void InitGame() {
     snake[0].color = RED;
 
     //Render apple position
-    apple.position = { (float)5 * SQUARE_SIZE, (float)6 * SQUARE_SIZE }; //Random x and y for now
+    RandomApple();
     apple.size = { (float)SQUARE_SIZE, (float)SQUARE_SIZE };
     apple.color = YELLOW;
 }
@@ -164,6 +165,16 @@ void CollisionApple(void) {
         snake[snakeLength].color = snake[snakeLength - 1].color;
         snakeLength++;
 		std::cout << "Apple eaten!" << std::endl;
+		RandomApple();
     }
     
+}
+
+void RandomApple() {
+    srand(time(NULL));
+    apple.position = {
+        (float)((rand() % (SCREEN_WIDTH / SQUARE_SIZE)) * SQUARE_SIZE) ,
+        (float)((rand() % (SCREEN_HEIGHT / SQUARE_SIZE)) * SQUARE_SIZE)
+    }; //Random x and y for now
+    std::cout << "Apple position: " << apple.position.x << " " << apple.position.y << std::endl;
 }
