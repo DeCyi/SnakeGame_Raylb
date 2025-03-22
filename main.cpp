@@ -57,6 +57,7 @@ void InitGame() {
     float centerX = ((SCREEN_WIDTH / 2) / SQUARE_SIZE) * SQUARE_SIZE;
     float centerY = ((SCREEN_HEIGHT / 2) / SQUARE_SIZE) * SQUARE_SIZE;
 
+	//Initialize snake positions
     for (int i = 0; i < MAX_SNAKE_LENGTH; i++) {
         snake[i].position = { centerX - (i * (float)SQUARE_SIZE), centerY };
         snake[i].size = { (float)SQUARE_SIZE, (float)SQUARE_SIZE };
@@ -138,6 +139,7 @@ void DrawElements(void) {
     EndDrawing();
 }
 void CollisionWall(void) {
+	// If the head of the snake is outside the screen
     if (snake[0].position.x >= SCREEN_WIDTH || snake[0].position.x < 0) {
         std::cout << "Game Over!" << std::endl;
 		exit(0);
@@ -148,6 +150,7 @@ void CollisionWall(void) {
     }
 }
 void CollisionSelf(void) {
+	// If the head of the snake is in the same position as any other part of the snake
         for (int i = 1; i < snakeLength; i++) {
             if ((snake[0].position.x == snake[i].position.x) && (snake[0].position.y == snake[i].position.y)) {
                 std::cout << "Game Over!" << std::endl;
@@ -157,6 +160,7 @@ void CollisionSelf(void) {
     }
 
 void CollisionApple(void) {
+	// If the head of the snake is in the same position as the apple
     if (snake[0].position.x == apple.position.x && snake[0].position.y == apple.position.y) {
         snake[snakeLength] = snake[snakeLength - 1];
         snakeLength++;
@@ -167,8 +171,8 @@ void CollisionApple(void) {
 }
 
 void RandomApple() {
-    srand(time(NULL));
-    apple.position = {
+	srand(time(NULL)); // Seed random number generator
+	apple.position = { // Randomize apple position
         (float)((rand() % (SCREEN_WIDTH / SQUARE_SIZE)) * SQUARE_SIZE) ,
         (float)((rand() % (SCREEN_HEIGHT / SQUARE_SIZE)) * SQUARE_SIZE)
     };
