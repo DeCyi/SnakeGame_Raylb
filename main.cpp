@@ -159,10 +159,7 @@ void CollisionSelf(void) {
 
 void CollisionApple(void) {
     if (snake[0].position.x == apple.position.x && snake[0].position.y == apple.position.y) {
-        snake[snakeLength].position = snake[snakeLength - 1].position;
-        snake[snakeLength].size = snake[snakeLength - 1].size;
-        snake[snakeLength].speed = snake[snakeLength - 1].speed;
-        snake[snakeLength].color = snake[snakeLength - 1].color;
+        snake[snakeLength] = snake[snakeLength - 1];
         snakeLength++;
 		std::cout << "Apple eaten!" << std::endl;
 		RandomApple();
@@ -175,6 +172,6 @@ void RandomApple() {
     apple.position = {
         (float)((rand() % (SCREEN_WIDTH / SQUARE_SIZE)) * SQUARE_SIZE) ,
         (float)((rand() % (SCREEN_HEIGHT / SQUARE_SIZE)) * SQUARE_SIZE)
-    }; //Random x and y for now
+    };
     std::cout << "Apple position: " << apple.position.x << " " << apple.position.y << std::endl;
 }
