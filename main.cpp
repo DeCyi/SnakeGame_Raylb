@@ -8,6 +8,13 @@
 #define SQUARE_SIZE 32
 #define DEFAULT_SNAKE_INIT_LENGTH 2
 
+
+enum Speed {
+	SLOW = 8,
+	MEDIUM = 5,
+	FAST = 2,
+};
+
 struct Snake {
     Vector2 position;
     Vector2 speed;
@@ -21,6 +28,7 @@ struct Apple {
     Color color;
 };
 
+Speed speed = SLOW;
 int frameCounter = 0;
 Vector2 offset = { 0 };
 Vector2 previousPosition = { 0 };
@@ -39,15 +47,22 @@ static void RandomApple(void);
 int main(void)
 {    
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake");
+	InitAudioDevice();
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     InitGame(); // Initialize game variables
+
+    Music music = LoadMusicStream("SnakeMusic.mp3");
+	PlayMusicStream(music);
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
     {
+		UpdateMusicStream(music);
         UpdateGame();
         DrawElements();
     }
+	UnloadMusicStream(music);
+	CloseAudioDevice();
     CloseWindow();       
 
     return 0;
@@ -72,22 +87,22 @@ void InitGame() {
     apple.color = YELLOW;
 }
 void UpdateGame() {
-    if (IsKeyPressed(KEY_LEFT) && snake[0].speed.x != (float)SQUARE_SIZE)
+    if (IsKeyPressed(KEY_LEFT) || IsKeyPressed(KEY_A) && snake[0].speed.x != (float)SQUARE_SIZE)
     {
         snake[0].speed.x = (float)-SQUARE_SIZE; //If left key, move left (negative x)
         snake[0].speed.y = 0; //No y movement
     }
-    if (IsKeyPressed(KEY_UP) && snake[0].speed.y != (float)SQUARE_SIZE)
+    if (IsKeyPressed(KEY_UP) || IsKeyPressed(KEY_W) && snake[0].speed.y != (float)SQUARE_SIZE)
     {
         snake[0].speed.x = 0; //No x movement
         snake[0].speed.y = (float)-SQUARE_SIZE; //If up key, move up (negative y)
     }
-    if (IsKeyPressed(KEY_DOWN) && snake[0].speed.y != (float)-SQUARE_SIZE)
+    if (IsKeyPressed(KEY_DOWN) || IsKeyPressed(KEY_S) && snake[0].speed.y != (float)-SQUARE_SIZE)
     {
         snake[0].speed.x = 0; //No x movement
         snake[0].speed.y = (float)SQUARE_SIZE; //If down key, move down (positive y)
     }
-    if (IsKeyPressed(KEY_RIGHT) && snake[0].speed.x != (float)-SQUARE_SIZE)
+    if (IsKeyPressed(KEY_RIGHT) || IsKeyPressed(KEY_D) && snake[0].speed.x != (float)-SQUARE_SIZE)
     {
         snake[0].speed.x = (float)SQUARE_SIZE; //If right key, move right (positive x)
         snake[0].speed.y = 0; //No y movement
@@ -96,7 +111,7 @@ void UpdateGame() {
     // Makes sure that it remembers where the head is now
     Vector2 previousPosition = snake[0].position;
 
-	if ((frameCounter % 5) == 0) { // Moves the snake every 5 frames
+	if ((frameCounter % speed) == 0) { // Moves the snake every 5 frames
         // Moves the head in its current direction
         snake[0].position.x += snake[0].speed.x;
         snake[0].position.y += snake[0].speed.y;
