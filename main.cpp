@@ -106,12 +106,12 @@ void UpdateGame() {
             snake[i].position = previousPosition; // Moves it to where the part in front was
             previousPosition = temp; // Update the previous position for the next part
         }
-        
+        CollisionWall();
+        CollisionSelf();
+        CollisionApple();
     }
 	frameCounter++;
-	CollisionWall();
-	CollisionSelf();
-    CollisionApple();
+	
 }
 
 void DrawElements(void) {
@@ -157,14 +157,13 @@ void CollisionSelf(void) {
     }
 
 void CollisionApple(void) {
-    if (frameCounter % 5 == 0) {
-        if (snake[0].position.x == apple.position.x && snake[0].position.y == apple.position.y) {
-            snake[snakeLength].position = snake[snakeLength - 1].position;
-            snake[snakeLength].size = snake[snakeLength - 1].size;
-            snake[snakeLength].speed = snake[snakeLength - 1].speed;
-            snake[snakeLength].color = snake[snakeLength - 1].color;
-            snakeLength++;
-			std::cout << "Apple eaten!" << std::endl;
-        }
+    if (snake[0].position.x == apple.position.x && snake[0].position.y == apple.position.y) {
+        snake[snakeLength].position = snake[snakeLength - 1].position;
+        snake[snakeLength].size = snake[snakeLength - 1].size;
+        snake[snakeLength].speed = snake[snakeLength - 1].speed;
+        snake[snakeLength].color = snake[snakeLength - 1].color;
+        snakeLength++;
+		std::cout << "Apple eaten!" << std::endl;
     }
+    
 }
