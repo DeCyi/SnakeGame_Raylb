@@ -18,7 +18,6 @@ struct Snake {
 struct Apple {
     Vector2 position;
     Vector2 size;
-    bool isActive; 
     Color color;
 };
 
