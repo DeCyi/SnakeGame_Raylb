@@ -32,6 +32,8 @@ int snakeLength = DEFAULT_SNAKE_INIT_LENGTH;
 static void InitGame(void);
 static void GrowSnake(void);
 static void UpdateGame(void);
+static void CollisionWall(void);
+static void CollisionSelf(void);
 static void DrawElements(void);
 
 int main(void)
@@ -147,3 +149,18 @@ void DrawElements(void) {
     ClearBackground(SKYBLUE);
     EndDrawing();
 }
+void CollisionWall(void) {
+    if (snake[0].position.x >= SCREEN_WIDTH || snake[0].position.x < 0) {
+        std::cout << "Game Over!" << std::endl;
+    }
+    if (snake[0].position.y >= SCREEN_HEIGHT || snake[0].position.y < 0) {
+        std::cout << "Game Over!" << std::endl;
+    }
+}
+void CollisionSelf(void) {
+        for (int i = 1; i < snakeLength; i++) {
+            if ((snake[0].position.x == snake[i].position.x) && (snake[0].position.y == snake[i].position.y)) {
+                std::cout << "Game Over!" << std::endl;
+            }
+        }
+    }
