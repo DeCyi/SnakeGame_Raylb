@@ -2,6 +2,7 @@
 #include "raylib.h"
 #include <string>
 #include <iostream>
+#include <stdint.h>
 #define MAX_SNAKE_LENGTH 100
 #define SCREEN_WIDTH 600
 #define SCREEN_HEIGHT 600
@@ -28,8 +29,11 @@ struct Apple {
     Color color;
 };
 
-Speed speed = FAST;
+Speed speed = SLOW;
+int state = 1;
 int frameCounter = 0;
+int gameState = 0;
+int score = 0;
 Vector2 offset = { 0 };
 Vector2 previousPosition = { 0 };
 Snake snake[MAX_SNAKE_LENGTH] = { 0 };
@@ -38,28 +42,43 @@ int snakeLength;
 
 static void InitGame(void);
 static void UpdateGame(void);
-static void CollisionWall(void);
-static void CollisionSelf(void);
+static void CollisionLogic(void);
 static void CollisionApple(void);
 static void DrawElements(void);
 static void RandomApple(void);
-
+static void MainMenu(void);
+static void GameStatus(void);
+static void GameOver(void);
 int main(void)
 {    
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake");
 	InitAudioDevice();
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
-    InitGame(); // Initialize game variables
+    // Initialize game variables
 
     Music music = LoadMusicStream("SnakeMusic.mp3");
 	PlayMusicStream(music);
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
-    {
-		UpdateMusicStream(music);
-        UpdateGame();
-        DrawElements();
+    {       
+       // GameStatus();
+        switch (state) {
+            case 1:
+            MainMenu();
+            break;
+            case 2:
+            DrawText(TextFormat("Score: %d", score), 400, 400, 32, BLACK);
+            UpdateMusicStream(music);
+            UpdateGame();
+            DrawElements();
+            break;
+            case 3:
+                GameOver();
+                break;
+
+         
+        }
     }
 	UnloadMusicStream(music);
 	CloseAudioDevice();
@@ -70,7 +89,7 @@ int main(void)
 
 void InitGame() {
     snakeLength = DEFAULT_SNAKE_INIT_LENGTH;
-
+   
 
     float centerX = ((SCREEN_WIDTH / 2) / SQUARE_SIZE) * SQUARE_SIZE;
     float centerY = ((SCREEN_HEIGHT / 2) / SQUARE_SIZE) * SQUARE_SIZE;
@@ -125,14 +144,61 @@ void UpdateGame() {
             snake[i].position = previousPosition; // Moves it to where the part in front was
             previousPosition = temp; // Update the previous position for the next part
         }
-        CollisionWall();
-        CollisionSelf();
+        CollisionLogic();
         CollisionApple();
     }
 	frameCounter++;
 	
 }
 
+void GameStatus() {
+    
+   /*
+    MainMenu();*/
+    
+    // This is for game menu and main game
+}
+
+void MainMenu(void) {
+    BeginDrawing();
+    ClearBackground(WHITE);
+    Rectangle button = { 300, 200, 50, 20 };
+    Color buttonColor = GREEN;
+
+    Vector2 mouseLoc = GetMousePosition();
+    bool isHover = CheckCollisionPointRec(mouseLoc, button);
+    DrawRectangleRec(button, buttonColor);
+    
+    if (isHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        TraceLog(LOG_INFO, "Button Clicked!");
+        InitGame();
+        state = 2;
+
+    }
+    DrawText("SNAKE GAME", 100, 200, 23, BLACK);
+    EndDrawing();
+   
+}
+void GameOver(void) {
+    BeginDrawing();
+    ClearBackground(WHITE);
+    Rectangle button = { 300, 200, 100, 40 };
+    Color buttonColor = GREEN;
+
+    Vector2 mouseLoc = GetMousePosition();
+    bool isHover = CheckCollisionPointRec(mouseLoc, button);
+    DrawRectangleRec(button, buttonColor);
+
+    if (isHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        TraceLog(LOG_INFO, "Button Clicked!");
+        InitGame();
+        state = 1;  
+
+    }
+    DrawText("GAME OVER", 100, 200, 23, BLACK);
+    DrawText("Play Again", 300, 200, 23, BLACK);
+    EndDrawing();
+}
 void DrawElements(void) {
     BeginDrawing(); 
 
@@ -156,26 +222,26 @@ void DrawElements(void) {
     ClearBackground(SKYBLUE);
     EndDrawing();
 }
-void CollisionWall(void) {
-	// If the head of the snake is outside the screen
+
+void CollisionLogic(void) {
+    // CASE Wall 
     if (snake[0].position.x >= SCREEN_WIDTH || snake[0].position.x < 0) {
         std::cout << "Game Over!" << std::endl;
-        InitGame();
+        state = 3;
     }
     if (snake[0].position.y >= SCREEN_HEIGHT || snake[0].position.y < 0) {
         std::cout << "Game Over!" << std::endl;
-        InitGame();
+        state = 3;
     }
-}
-void CollisionSelf(void) {
-	// If the head of the snake is in the same position as any other part of the snake
-        for (int i = 1; i < snakeLength; i++) {
-            if ((snake[0].position.x == snake[i].position.x) && (snake[0].position.y == snake[i].position.y)) {
-                std::cout << "Game Over!" << std::endl;
-                InitGame();
-            }
+    // CASE Self
+    for (int i = 1; i < snakeLength; i++) {
+        if ((snake[0].position.x == snake[i].position.x) && (snake[0].position.y == snake[i].position.y)) {
+            std::cout << "Game Over!" << std::endl;
+            //InitGame();
+            state = 3;
         }
     }
+}
 
 void CollisionApple(void) {
 	// If the head of the snake is in the same position as the apple
@@ -183,6 +249,7 @@ void CollisionApple(void) {
         snake[snakeLength] = snake[snakeLength - 1];
         snakeLength++;
 		std::cout << "Apple eaten!" << std::endl;
+        score++;
 		RandomApple();
     }
 }
