@@ -49,6 +49,7 @@ static void RandomApple(void);
 static void MainMenu(void);
 static void GameStatus(void);
 static void GameOver(void);
+
 int main(void)
 {    
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Snake");
@@ -65,19 +66,17 @@ int main(void)
        // GameStatus();
         switch (state) {
             case 1:
-            MainMenu();
-            break;
+                MainMenu();
+                break;
             case 2:
-            DrawText(TextFormat("Score: %d", score), 400, 400, 32, BLACK);
-            UpdateMusicStream(music);
-            UpdateGame();
-            DrawElements();
-            break;
+                DrawText(TextFormat("Score: %d", score), 400, 400, 32, BLACK);
+                UpdateMusicStream(music);
+                UpdateGame();
+                DrawElements();
+                break;
             case 3:
                 GameOver();
                 break;
-
-         
         }
     }
 	UnloadMusicStream(music);
