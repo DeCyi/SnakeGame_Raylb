@@ -6,7 +6,7 @@
 #define MAX_SNAKE_LENGTH 100
 #define SCREEN_WIDTH 600
 #define SCREEN_HEIGHT 600
-#define SQUARE_SIZE 32
+#define SQUARE_SIZE 30
 #define DEFAULT_SNAKE_INIT_LENGTH 3
 
 
@@ -61,21 +61,19 @@ int main(void)
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
-    {       
-       // GameStatus();
+    {
         switch (state) {
             case 1:
             MainMenu();
             break;
             case 2:
-            DrawText(TextFormat("Score: %d", score), 400, 400, 32, BLACK);
             UpdateMusicStream(music);
             UpdateGame();
             DrawElements();
             break;
             case 3:
-                GameOver();
-                break;
+            GameOver();
+            break;
 
          
         }
@@ -151,52 +149,58 @@ void UpdateGame() {
 	
 }
 
-void GameStatus() {
-    
-   /*
-    MainMenu();*/
-    
-    // This is for game menu and main game
-}
-
 void MainMenu(void) {
     BeginDrawing();
     ClearBackground(WHITE);
-    Rectangle button = { 300, 200, 50, 20 };
+    Rectangle button = { 250, 200, 80, 40 };
     Color buttonColor = GREEN;
 
     Vector2 mouseLoc = GetMousePosition();
     bool isHover = CheckCollisionPointRec(mouseLoc, button);
     DrawRectangleRec(button, buttonColor);
+    if (isHover) buttonColor = GRAY;
+    
+    else buttonColor = GREEN;
     
     if (isHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         TraceLog(LOG_INFO, "Button Clicked!");
         InitGame();
         state = 2;
-
     }
-    DrawText("SNAKE GAME", 100, 200, 23, BLACK);
+    DrawText("SNAKE GAME", 220, 100, 23, BLACK);
+    DrawText("PLAY", 260, 210, 23, BLACK);
     EndDrawing();
    
 }
 void GameOver(void) {
     BeginDrawing();
     ClearBackground(WHITE);
-    Rectangle button = { 300, 200, 100, 40 };
+    Rectangle button = { 350, 200, 100, 40 };
     Color buttonColor = GREEN;
-
+    Rectangle button2 = { 350, 300, 100,40 };
     Vector2 mouseLoc = GetMousePosition();
     bool isHover = CheckCollisionPointRec(mouseLoc, button);
+    bool isHover2 = CheckCollisionPointRec(mouseLoc, button2);
     DrawRectangleRec(button, buttonColor);
+    DrawRectangleRec(button2, buttonColor);
 
+    if(isHover){
+    }
     if (isHover && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
         TraceLog(LOG_INFO, "Button Clicked!");
         InitGame();
         state = 1;  
 
     }
-    DrawText("GAME OVER", 100, 200, 23, BLACK);
-    DrawText("Play Again", 300, 200, 23, BLACK);
+    if (isHover2 && IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
+        TraceLog(LOG_INFO, "Button Clicked!");
+        InitGame();
+        state = 2;
+    }
+    DrawText("GAME OVER", 100, 200, 36, BLACK);
+    DrawText(TextFormat("Final Score: %d", score), 100, 250, 24, BLACK);
+    DrawText("Main Menu", 360, 210, 18, BLACK);
+    DrawText("Play Again", 360, 310, 18, BLACK);
     EndDrawing();
 }
 void DrawElements(void) {
@@ -217,6 +221,7 @@ void DrawElements(void) {
             snake[i].size.x, snake[i].size.y, snake[i].color);
     }
     DrawRectangle(apple.position.x, apple.position.y, apple.size.x, apple.size.y, apple.color);
+    DrawText(TextFormat("Score: %d", score), 50, 70, 32, BLACK);
 
     
     ClearBackground(SKYBLUE);
