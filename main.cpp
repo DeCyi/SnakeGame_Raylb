@@ -34,6 +34,7 @@ int state = 1;
 int frameCounter = 0;
 int gameState = 0;
 int score = 0;
+int high_score = 0;
 Vector2 offset = { 0 };
 Vector2 previousPosition = { 0 };
 Snake snake[MAX_SNAKE_LENGTH] = { 0 };
@@ -150,6 +151,19 @@ void UpdateGame() {
 	
 }
 
+void HandleUsernameInput(void) {
+    int key = GetCharPressed();
+    char username[3];
+
+    while (key > 0) {
+        printf("%c", key);
+        if (key == 'r') {
+            return;
+        }
+        key = GetCharPressed();
+    }
+}
+
 void MainMenu(void) {
     BeginDrawing();
     ClearBackground(WHITE);
@@ -200,6 +214,7 @@ void GameOver(void) {
     }
     DrawText("GAME OVER", 100, 200, 36, BLACK);
     DrawText(TextFormat("Final Score: %d", score), 100, 250, 24, BLACK);
+    DrawText(TextFormat("High Score: %d", high_score), 100, 280, 24, BLACK);
     DrawText("Main Menu", 360, 210, 18, BLACK);
     DrawText("Play Again", 360, 310, 18, BLACK);
     EndDrawing();
