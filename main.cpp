@@ -50,6 +50,8 @@ static void RandomApple(void);
 static void MainMenu(void);
 static void GameStatus(void);
 static void GameOver(void);
+static void OpeningFile(void);
+static void Update_Highscore(void);
 
 int main(void)
 {    
@@ -88,8 +90,9 @@ int main(void)
 }
 
 void InitGame() {
+    score = 0;
     snakeLength = DEFAULT_SNAKE_INIT_LENGTH;
-   
+	OpeningFile();
 
     float centerX = ((SCREEN_WIDTH / 2) / SQUARE_SIZE) * SQUARE_SIZE;
     float centerY = ((SCREEN_HEIGHT / 2) / SQUARE_SIZE) * SQUARE_SIZE;
@@ -176,6 +179,12 @@ void MainMenu(void) {
 }
 void GameOver(void) {
     BeginDrawing();
+
+	if (score > high_score) {
+		Update_Highscore();
+	}
+	
+
     ClearBackground(WHITE);
     Rectangle button = { 350, 200, 100, 40 };
     Color buttonColor = GREEN;
@@ -274,4 +283,28 @@ void RandomApple() {
         apple.position = { newApplePosition.x, newApplePosition.y };
 	} while (previousApplePosition.x == newApplePosition.x && previousApplePosition.y == newApplePosition.y);
     std::cout << "Apple position: " << apple.position.x << " " << apple.position.y << std::endl;
+}
+
+void OpeningFile() {
+    FILE* file;
+    fopen_s(&file, "score.bin", "rb");
+    if (file == NULL)
+    {
+        printf("file does not exist, creating a new file");
+        fopen_s(&file, "score.bin", "wb");
+
+        int a = 0;
+        fwrite(&a, sizeof(int), 1, file);
+        fclose(file);
+    }
+    fread(&high_score, sizeof(int), 1, file);
+    fclose(file);
+}
+void Update_Highscore() {
+    FILE* file;
+    high_score = score;
+    fopen_s(&file, "score.bin", "wb");
+
+    fwrite(&high_score, sizeof(int), 1, file);
+    fclose(file);
 }
