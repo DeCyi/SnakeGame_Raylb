@@ -151,19 +151,6 @@ void UpdateGame() {
 	
 }
 
-void HandleUsernameInput(void) {
-    int key = GetCharPressed();
-    char username[3];
-
-    while (key > 0) {
-        printf("%c", key);
-        if (key == 'r') {
-            return;
-        }
-        key = GetCharPressed();
-    }
-}
-
 void MainMenu(void) {
     BeginDrawing();
     ClearBackground(WHITE);
