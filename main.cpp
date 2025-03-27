@@ -60,7 +60,7 @@ int main(void)
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     // Initialize game variables
 
-    Music music = LoadMusicStream("SnakeMusic.mp3");
+    Music music = LoadMusicStream("assets/SnakeMusic.mp3");
 	PlayMusicStream(music);
 
     // Main game loop
