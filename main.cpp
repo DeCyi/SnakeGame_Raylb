@@ -287,11 +287,11 @@ void RandomApple() {
 
 void OpeningFile() {
     FILE* file;
-    fopen_s(&file, "score.bin", "rb");
+    fopen_s(&file, "assets/score.bin", "rb");
     if (file == NULL)
     {
         printf("file does not exist, creating a new file");
-        fopen_s(&file, "score.bin", "wb");
+        fopen_s(&file, "assets/score.bin", "wb");
 
         int a = 0;
         fwrite(&a, sizeof(int), 1, file);
@@ -303,7 +303,7 @@ void OpeningFile() {
 void Update_Highscore() {
     FILE* file;
     high_score = score;
-    fopen_s(&file, "score.bin", "wb");
+    fopen_s(&file, "assets/score.bin", "wb");
 
     fwrite(&high_score, sizeof(int), 1, file);
     fclose(file);
